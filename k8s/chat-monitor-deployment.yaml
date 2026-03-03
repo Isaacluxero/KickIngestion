@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-monitor
+  namespace: default
+  labels:
+    app: chat-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chat-monitor
+  template:
+    metadata:
+      labels:
+        app: chat-monitor
+    spec:
+      containers:
+        - name: chat-monitor
+          # Built and imported locally via build.sh — no registry required.
+          # Rebuild with: ./build.sh
+          image: kick-monitor:latest
+          imagePullPolicy: Never
+          command: ["python", "main.py"]
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379
+            - name: ROSTER_PATH
+              value: /config/roster.yaml
+            - name: EMOTES_PATH
+              value: /config/emotes.yaml
+            - name: KICK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: kick-credentials
+                  key: KICK_CLIENT_ID
+            - name: KICK_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: kick-credentials
+                  key: KICK_CLIENT_SECRET
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      volumes:
+        - name: config
+          configMap:
+            name: kick-roster
+      restartPolicy: Always

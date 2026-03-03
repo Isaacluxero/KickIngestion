@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kick-roster
+  namespace: default
+data:
+  roster.yaml: |
+    streamers:
+      - xqc
+      - adin
+      - trainwreckstv
+    min_chat_spike: 80
+    clip_window: 150
+    poll_interval: 300
+
+  emotes.yaml: |
+    # Hype emotes used for spike signal 2 (hype_ratio).
+    # Edit this list and re-apply the ConfigMap to update without redeploying.
+    emotes:
+      - KEKW
+      - PogChamp
+      - Pog
+      - OMEGALUL
+      - OMFG
+      - PauseChamp
+      - monkaS
+      - monkaW
+      - EZ
+      - Clap
+      - GIGACHAD
+      - pepeD
+      - Sadge
+      - peepoHappy
+      - HYPERS
+      - PogO
+      - Copium
+      - widepeepoHappy

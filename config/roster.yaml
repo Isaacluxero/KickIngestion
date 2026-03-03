@@ -1,0 +1,7 @@
+streamers:
+  - xqc
+  - adin
+  - trainwreckstv
+min_chat_spike: 80
+clip_window: 150
+poll_interval: 300

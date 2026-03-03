@@ -1,0 +1,22 @@
+# Hype emotes for spike signal 2 (hype_ratio threshold).
+# These are plain text strings matched against raw chat message content.
+# Add or remove emotes here and re-apply the ConfigMap — no redeploy needed.
+emotes:
+  - KEKW
+  - PogChamp
+  - Pog
+  - OMEGALUL
+  - OMFG
+  - PauseChamp
+  - monkaS
+  - monkaW
+  - EZ
+  - Clap
+  - GIGACHAD
+  - pepeD
+  - Sadge
+  - peepoHappy
+  - HYPERS
+  - PogO
+  - Copium
+  - widepeepoHappy

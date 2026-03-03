@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clip-downloader
+  namespace: default
+  labels:
+    app: clip-downloader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clip-downloader
+  template:
+    metadata:
+      labels:
+        app: clip-downloader
+    spec:
+      containers:
+        - name: clip-downloader
+          # Built and imported locally via build.sh — no registry required.
+          # Rebuild with: ./build.sh
+          image: kick-downloader:latest
+          imagePullPolicy: Never
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379
+            - name: CLIPS_DIR
+              value: /clips
+          volumeMounts:
+            - name: clips
+              mountPath: /clips
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+      volumes:
+        - name: clips
+          persistentVolumeClaim:
+            claimName: clips-pvc
+      restartPolicy: Always
