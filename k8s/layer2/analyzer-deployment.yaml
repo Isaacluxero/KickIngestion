@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clip-analyzer
+  namespace: default
+  labels:
+    app: clip-analyzer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clip-analyzer
+  template:
+    metadata:
+      labels:
+        app: clip-analyzer
+    spec:
+      containers:
+        - name: clip-analyzer
+          image: kick-analyzer:latest
+          imagePullPolicy: Never
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379
+            - name: CLIPS_DIR
+              value: /clips
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: ai-credentials
+                  key: ANTHROPIC_API_KEY
+            - name: WHISPER_MODEL_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: analysis-config
+                  key: WHISPER_MODEL_SIZE
+            - name: MIN_SCORE
+              valueFrom:
+                configMapKeyRef:
+                  name: analysis-config
+                  key: MIN_SCORE
+          volumeMounts:
+            - name: clips
+              mountPath: /clips
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+      volumes:
+        - name: clips
+          persistentVolumeClaim:
+            claimName: clips-pvc
+      restartPolicy: Always

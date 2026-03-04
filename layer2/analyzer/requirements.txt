@@ -1,0 +1,5 @@
+faster-whisper
+anthropic
+redis
+ffmpeg-python
+pyyaml

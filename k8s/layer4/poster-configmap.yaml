@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: poster-config
+  namespace: default
+data:
+  N8N_WEBHOOK_URL: "http://your-n8n-instance:5678/webhook/kick-clipper"
+  DAILY_SLOTS: "25"
+  WAKING_START_HOUR: "8"
+  WAKING_END_HOUR: "26"

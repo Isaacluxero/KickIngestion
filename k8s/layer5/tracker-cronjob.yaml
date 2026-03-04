@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: clip-tracker
+  namespace: default
+  labels:
+    app: clip-tracker
+spec:
+  schedule: "0 9 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: clip-tracker
+              image: kick-tracker:latest
+              imagePullPolicy: Never
+              env:
+                - name: REDIS_URL
+                  value: redis://redis:6379
+                - name: TIKTOK_ACCESS_TOKEN
+                  valueFrom:
+                    secretKeyRef:
+                      name: tracker-credentials
+                      key: TIKTOK_ACCESS_TOKEN
+              resources:
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "512Mi"
+                  cpu: "500m"

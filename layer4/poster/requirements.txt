@@ -1,0 +1,4 @@
+tiktok-uploader
+playwright
+redis
+requests

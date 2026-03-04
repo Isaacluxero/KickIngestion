@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clip-poster
+  namespace: default
+  labels:
+    app: clip-poster
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clip-poster
+  template:
+    metadata:
+      labels:
+        app: clip-poster
+    spec:
+      containers:
+        - name: clip-poster
+          image: kick-poster:latest
+          imagePullPolicy: Never
+          env:
+            - name: REDIS_URL
+              value: redis://redis:6379
+            - name: CLIPS_DIR
+              value: /clips
+            - name: TIKTOK_SESSIONIDS
+              valueFrom:
+                secretKeyRef:
+                  name: poster-credentials
+                  key: TIKTOK_SESSIONIDS
+            - name: BLOTATO_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: poster-credentials
+                  key: BLOTATO_API_KEY
+            - name: N8N_WEBHOOK_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: poster-config
+                  key: N8N_WEBHOOK_URL
+            - name: DAILY_SLOTS
+              valueFrom:
+                configMapKeyRef:
+                  name: poster-config
+                  key: DAILY_SLOTS
+            - name: WAKING_START_HOUR
+              valueFrom:
+                configMapKeyRef:
+                  name: poster-config
+                  key: WAKING_START_HOUR
+            - name: WAKING_END_HOUR
+              valueFrom:
+                configMapKeyRef:
+                  name: poster-config
+                  key: WAKING_END_HOUR
+          volumeMounts:
+            - name: clips
+              mountPath: /clips
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+      volumes:
+        - name: clips
+          persistentVolumeClaim:
+            claimName: clips-pvc
+      restartPolicy: Always

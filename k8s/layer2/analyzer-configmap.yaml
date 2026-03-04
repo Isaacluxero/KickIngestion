@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: analysis-config
+  namespace: default
+data:
+  WHISPER_MODEL_SIZE: "base"
+  MIN_SCORE: "6"

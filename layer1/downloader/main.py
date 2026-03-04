@@ -111,7 +111,25 @@ async def process_event(redis_client, event: dict):
     success, error = await run_ytdlp(streamer, timestamp, clip_window)
 
     if success:
-        log.info("[%s] Clip saved to %s/%d", streamer, out_dir, int(timestamp))
+        # Find the actual downloaded file (yt-dlp resolves %(ext)s at runtime)
+        matches = list(out_dir.glob(f"{int(timestamp)}.*"))
+        if matches:
+            file_path = str(matches[0])
+            transcribe_entry = {
+                "streamer": streamer,
+                "timestamp": timestamp,
+                "msgs_per_sec": msgs_per_sec,
+                "stream_id": event.get("stream_id", ""),
+                "clip_window": clip_window,
+                "hype_ratio": hype_ratio,
+                "priority": priority,
+                "clip_count": clip_count,
+                "file_path": file_path,
+            }
+            await redis_client.lpush("clip:queue:transcribe", json.dumps(transcribe_entry))
+            log.info("[%s] Clip saved to %s — queued for analysis", streamer, file_path)
+        else:
+            log.warning("[%s] Download success but no file found at %s/%d.*", streamer, out_dir, int(timestamp))
     else:
         failure_entry = {**event, "error": error}
         await redis_client.rpush("clip:failed", json.dumps(failure_entry))
