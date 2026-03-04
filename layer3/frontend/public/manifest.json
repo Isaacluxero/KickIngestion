@@ -1,0 +1,9 @@
+{
+  "name": "Clip Approver",
+  "short_name": "Clips",
+  "display": "fullscreen",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "start_url": "/",
+  "icons": []
+}
